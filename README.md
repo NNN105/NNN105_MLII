@@ -37,3 +37,5 @@ Mejorar la velocidad y la precisión de la detección y localización de tumores
 - ipython kernel install --user --name=envmlii -> Kernel del proyecto: Installed kernelspec envmlii in C:\Users\nicom\AppData\Roaming\jupyter\kernels\envmlii
 
 ### Actividades
+
+- Clase III = Ejecutar notebook para observar el funcionamiento de la mascara cuando hay presencia de tumores
