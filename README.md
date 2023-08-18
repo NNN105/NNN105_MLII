@@ -49,7 +49,7 @@ Mejorar la velocidad y la precisión de la detección y localización de tumores
 - Se muestra el archivo del dataframe: 3928 filas y 4 columnas. Marcara 0 sin tumor, Marcara 1 con tumor.
 - Se realiza un grafico de barras que muestra la distribucion de datos de la mascara.
 - Se comienzan a analizar las muestras, viendo imagenes junto con las imagenes de mascara.
-- Se realizan muestras de imagenes, juntando la imagenes y generar el resultado.
+- Se realizan muestras de imagenes aleatorias, juntando la imagenes y generar el resultado.
 
 ## Clase IV
 ### Entrenamiento de Modelo
@@ -63,4 +63,9 @@ Mejorar la velocidad y la precisión de la detección y localización de tumores
 - Se compila el modelo.
 - Se realiza el entrenamiento. Se guarda los datos en un archivo tipo json.
 - Se modifica la arquitectura y se vuelve a entrenar: 25 Epocas.  1803s 10s/step - loss: 0.2128 - accuracy: 0.9245 - val_loss: 0.2250 - val_accuracy: 0.9073. Se vuelve a guardar.
+- Hacemos la prediccion con las imagenes de testeo: 
 - Evaluamos el resultado del modelo entrenado, tasa de acierto: 0.9027777777777778
+ 				precision    recall  f1-score   support
+
+           0       0.91      0.94      0.93       375
+           1       0.88      0.83      0.86       201
