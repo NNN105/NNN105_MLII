@@ -4,6 +4,7 @@
 
 Mejorar la velocidad y la precisión de la detección y localización de tumores cerebrales en función de las imágenes por resonancia magnética
 
+## Clase II
 ### Pre-requisitos
 
 - python --version -> Python 3.11.4
@@ -36,6 +37,30 @@ Mejorar la velocidad y la precisión de la detección y localización de tumores
 - .\envmlii\Scripts\activate
 - ipython kernel install --user --name=envmlii -> Kernel del proyecto: Installed kernelspec envmlii in C:\Users\nicom\AppData\Roaming\jupyter\kernels\envmlii
 
-### Actividades
 
-- Clase III = Ejecutar notebook para observar el funcionamiento de la mascara cuando hay presencia de tumores
+## Clase III 
+### Comienzo de Actividades
+#### Carga de Librerias y Dataframe
+- Se cargan las librerias necesarias para el proyecto.
+- Se crea un datafame con: id, path de imagen, path de mascara y valor de marcasa.
+- Muestras no estan balanceadas, 65% sin tumor. Seria optimo mejor porcentaje con tumor.
+
+#### Visualizacion de datos:
+- Se muestra el archivo del dataframe: 3928 filas y 4 columnas. Marcara 0 sin tumor, Marcara 1 con tumor.
+- Se realiza un grafico de barras que muestra la distribucion de datos de la mascara.
+- Se comienzan a analizar las muestras, viendo imagenes junto con las imagenes de mascara.
+- Se realizan muestras de imagenes, juntando la imagenes y generar el resultado.
+
+## Clase IV
+### Entrenamiento de Modelo
+#### Para detectar si existe o no el tumor en la imagen del paciente
+- Se elimina la columna con el id del paciente y creamos un nuevo dataframe, no necesaria para el entrenamiento.
+- Se convierten los datos del dataframe a string.
+- Se dividen los datos para entrenamiento y para posterior testing(15%). 
+- Se estandarizan el tamaño de las imagenes a utilizar. Los datos de entrenamiento a su vez, se reserva un 15% para validar el entrenamiento. 
+- Usamos como base la ResNet50.
+- Se agrega la cabecera de clasificacion.
+- Se compila el modelo.
+- Se realiza el entrenamiento. Se guarda los datos en un archivo tipo json.
+- Se modifica la arquitectura y se vuelve a entrenar: 25 Epocas.  1803s 10s/step - loss: 0.2128 - accuracy: 0.9245 - val_loss: 0.2250 - val_accuracy: 0.9073. Se vuelve a guardar.
+- Evaluamos el resultado del modelo entrenado, tasa de acierto: 0.9027777777777778
