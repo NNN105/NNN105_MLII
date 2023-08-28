@@ -62,10 +62,22 @@ Mejorar la velocidad y la precisión de la detección y localización de tumores
 - Se agrega la cabecera de clasificacion.
 - Se compila el modelo.
 - Se realiza el entrenamiento. Se guarda los datos en un archivo tipo json.
-- Se modifica la arquitectura y se vuelve a entrenar: 25 Epocas.  1803s 10s/step - loss: 0.2128 - accuracy: 0.9245 - val_loss: 0.2250 - val_accuracy: 0.9073. Se vuelve a guardar.
+- Se modifica la arquitectura y se vuelve a entrenar: 50 Epocas.   1532s 9s/step - loss: 0.0921 - accuracy: 0.9685 - val_loss: 0.2493 - val_accuracy: 0.9375 Epoch 43: early stopping. Se vuelve a guardar.
 - Hacemos la prediccion con las imagenes de testeo: 
-- Evaluamos el resultado del modelo entrenado, tasa de acierto: 0.9027777777777778
+#### Evaluamos los resultados
+- Evaluamos el resultado del modelo entrenado, tasa de acierto: 0.9496527777777778
  				precision    recall  f1-score   support
 
-           0       0.91      0.94      0.93       375
-           1       0.88      0.83      0.86       201
+           0       0.96      0.96      0.96       373
+           1       0.92      0.94      0.93       203
+
+## Clase V
+### Modelo de Segmentacion
+#### Se construye el modelo de Segmentacion para localizar el tumor
+- Buscamos dataframe que contiene las RRMM con máscaras asociadas.
+- Se divide las muestras para entrenamiento, test y validacion.
+- Se importa Utilities: Generador de datos, prediccion y tversky
+- Se definen la funcion de la red RESUNET.
+- Implementa la arquitectura de la red RESUNET
+- Entrenamos el modelo de RESUNET para la localizacion de tumores, con 25 epocas y lo guardamos:
+

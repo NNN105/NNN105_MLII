@@ -9,7 +9,7 @@ from skimage import io
 from PIL import Image
 from tensorflow.keras import backend as K
   
-#creating a custom datagenerator:
+#creando un generador de datos personalizado:
 
 class DataGenerator(tf.keras.utils.Sequence):
   def __init__(self, ids , mask, image_dir = './', batch_size = 16, img_h = 256, img_w = 256, shuffle = True):
@@ -31,73 +31,72 @@ class DataGenerator(tf.keras.utils.Sequence):
   def __getitem__(self, index):
     'Generate a batch of data'
 
-    #generate index of batch_size length
+    #generar índice de longitud de tamaño de lote
     indexes = self.indexes[index* self.batch_size : (index+1) * self.batch_size]
 
-    #get the ImageId corresponding to the indexes created above based on batch size
+    #obtener el ImageId correspondiente a los índices creados anteriormente según el tamaño del lote
     list_ids = [self.ids[i] for i in indexes]
 
-    #get the MaskId corresponding to the indexes created above based on batch size
+    #obtener el MaskId correspondiente a los índices creados anteriormente según el tamaño del lote
     list_mask = [self.mask[i] for i in indexes]
 
-
-    #generate data for the X(features) and y(label)
+    #generar datos para X (características) e y (etiqueta)
     X, y = self.__data_generation(list_ids, list_mask)
 
-    #returning the data
+    #retornar los datos
     return X, y
 
   def on_epoch_end(self):
-    'Used for updating the indices after each epoch, once at the beginning as well as at the end of each epoch'
+    'Se utiliza para actualizar los índices después de cada época, tanto al principio como al final de cada época.'
     
-    #getting the array of indices based on the input dataframe
+    #obtener la matriz de índices según el marco de datos de entrada  
     self.indexes = np.arange(len(self.ids))
 
-    #if shuffle is true, shuffle the indices
+    #si la mezcla aleatoria es verdadera, mezcla los índices 
     if self.shuffle:
       np.random.shuffle(self.indexes)
 
   def __data_generation(self, list_ids, list_mask):
     'generate the data corresponding the indexes in a given batch of images'
 
-    # create empty arrays of shape (batch_size,height,width,depth) 
-    #Depth is 3 for input and depth is taken as 1 for output becasue mask consist only of 1 channel.
+    # crear matrices vacías de formas (batch_size,height,width,depth) 
+    #La profundidad es 3 para la entrada y la profundidad se toma como 1 para la salida porque la máscara consta solo de 1 canal.
     X = np.empty((self.batch_size, self.img_h, self.img_w, 3))
     y = np.empty((self.batch_size, self.img_h, self.img_w, 1))
 
-    #iterate through the dataframe rows, whose size is equal to the batch_size
+    #iterar a través de las filas del marco de datos, cuyo tamaño es igual al tamaño del lote
     for i in range(len(list_ids)):
-      #path of the image
+      #path de la imagen
       img_path = './' + str(list_ids[i])
       
-      #mask path
+      #path de la mascara
       mask_path = './' + str(list_mask[i])
       
-      #reading the original image and the corresponding mask image
+      #leer la imagen original y la imagen de máscara correspondiente
       img = io.imread(img_path)
       mask = io.imread(mask_path)
 
-      #resizing and coverting them to array of type float64
+      #Cambiar el tamaño y encubrirlas a la matriz de tipo float64
       img = cv2.resize(img,(self.img_h,self.img_w))
       img = np.array(img, dtype = np.float64)
       
       mask = cv2.resize(mask,(self.img_h,self.img_w))
       mask = np.array(mask, dtype = np.float64)
 
-      #standardising 
+      #estandarizando 
       img -= img.mean()
       img /= img.std()
       
       mask -= mask.mean()
       mask /= mask.std()
       
-      #Adding image to the empty array
+      #Agregar imagen a la matriz vacía
       X[i,] = img
       
-      #expanding the dimnesion of the image from (256,256) to (256,256,1)
+      #ampliando la dimensión de la imagen desde (256,256) a (256,256,1)
       y[i,] = np.expand_dims(mask, axis = 2)
     
-    #normalizing y
+    #normalizar y
     y = (y > 0).astype(int)
 
     return X, y
@@ -109,77 +108,78 @@ class DataGenerator(tf.keras.utils.Sequence):
 
 def prediction(test, model, model_seg):
   '''
-  Predcition function which takes dataframe containing ImageID as Input and perform 2 type of prediction on the image
-  Initially, image is passed through the classification network which predicts whether the image has defect or not, if the model
-  is 99% sure that the image has no defect, then the image is labeled as no-defect, if the model is not sure, it passes the image to the
-  segmentation network, it again checks if the image has defect or not, if it has defect, then the type and location of defect is found
+  Función de predicción que toma el marco de datos que contiene ImageID como entrada y realiza 2 tipos de predicción en la imagen
+  Inicialmente, la imagen pasa a través de la red de clasificación que predice si la imagen tiene defectos o no, si el modelo
+  está 99% seguro de que la imagen no tiene ningún defecto, entonces la imagen se etiqueta como sin defectos, si el modelo no está seguro, pasa la imagen al
+  red de segmentación, nuevamente verifica si la imagen tiene defecto o no, si tiene defecto, luego se encuentra el tipo y la ubicación del defecto
   '''
 
-  #directory
-  directory = "./"
+  #directorio
+  directory = os.path.abspath('dataset')
 
-  #Creating empty list to store the results
+  #Creando una lista vacía para almacenar los resultados
   mask = []
   image_id = []
   has_mask = []
 
-  #iterating through each image in the test data
+  #iterando a través de cada imagen en los datos de prueba
   for i in test.image_path:
 
     path = directory + str(i)
+    path = os.path.join(directory, str(i))
 
-    #reading the image
+    #leer la imagen
     img = io.imread(path)
 
-    #Normalizing the image
+    #Normalizando la imagen
     img = img * 1./255.
 
-    #Reshaping the image
+    #Remodelando la imagen
     img = cv2.resize(img,(256,256))
 
-    #Converting the image into array
+    #Convertir la imagen en una matriz
     img = np.array(img, dtype = np.float64)
     
-    #reshaping the image from 256,256,3 to 1,256,256,3
+    #remodelando la imagen de256,256,3 a 1,256,256,3
     img = np.reshape(img, (1,256,256,3))
 
-    #making prediction on the image
+    #haciendo predicciones sobre la imagen
     is_defect = model.predict(img)
 
-    #if tumour is not present we append the details of the image to the list
+    #Si el tumor no está presente, agregamos los detalles de la imagen a la lista.
     if np.argmax(is_defect) == 0:
       image_id.append(i)
       has_mask.append(0)
       mask.append('No mask')
       continue
 
-    #Read the image
+    #Leer la imagen
     img = io.imread(path)
 
-    #Creating a empty array of shape 1,256,256,1
+    #Creando una matriz vacía de formas 1,256,256,1
     X = np.empty((1, 256, 256, 3))
 
-    #resizing the image and coverting them to array of type float64
+    #Cambiar el tamaño de la imagen y encubrirlas a matriz de tipo float64
     img = cv2.resize(img,(256,256))
     img = np.array(img, dtype = np.float64)
 
-    #standardising the image
+    #Estandarizando la imagen
     img -= img.mean()
     img /= img.std()
 
-    #converting the shape of image from 256,256,3 to 1,256,256,3
+    #convertir la forma de la imagen de 256,256,3 a 1,256,256,3
     X[0,] = img
 
-    #make prediction
+    #hacer predicción
     predict = model_seg.predict(X)
 
-    #if the sum of predicted values is equal to 0 then there is no tumour
+    #si la suma de los valores predichos es igual a 0 entonces no hay tumor
     if predict.round().astype(int).sum() == 0:
         image_id.append(i)
         has_mask.append(0)
         mask.append('No mask')
     else:
-    #if the sum of pixel values are more than 0, then there is tumour
+    #Si la suma de los valores de los píxeles es mayor que 0, entonces hay un tumor.
         image_id.append(i)
         has_mask.append(1)
         mask.append(predict)
@@ -192,15 +192,16 @@ def prediction(test, model, model_seg):
 
 
 '''
-We need a custom loss function to train this ResUNet.So,  we have used the loss function as it is from https://github.com/nabsabraham/focal-tversky-unet/blob/master/losses.py
-
+Necesitamos una función de pérdida personalizada para entrenar este ResUNet. 
+Entonces, hemos usado la función de pérdida tal como está en https://github.com/nabsabraham/focal-tversky-unet/blob/master/losses.py
 
 @article{focal-unet,
-  title={A novel Focal Tversky loss function with improved Attention U-Net for lesion segmentation},
+  title={Una nueva función de pérdida focal de Tversky con Atención U-Net mejorada para la segmentación de lesiones},
   author={Abraham, Nabila and Khan, Naimul Mefraz},
   journal={arXiv preprint arXiv:1810.07842},
   year={2018}
 }
+
 '''
 def tversky(y_true, y_pred, smooth = 1e-6):
     y_true_pos = K.flatten(y_true)
