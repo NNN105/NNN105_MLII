@@ -80,4 +80,7 @@ Mejorar la velocidad y la precisión de la detección y localización de tumores
 - Se definen la funcion de la red RESUNET.
 - Implementa la arquitectura de la red RESUNET
 - Entrenamos el modelo de RESUNET para la localizacion de tumores, con 25 epocas y lo guardamos:
+Epoch 35: val_loss did not improve from 0.24719
+72/72 [==============================] - 401s 6s/step - loss: 0.2076 - tversky: 0.8764 - val_loss: 0.2551 - val_tversky: 0.8371
+
 
