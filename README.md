@@ -85,5 +85,6 @@ Epoch 35: val_loss did not improve from 0.24719
 
 #### Se evalua el rendimiento del modelo RESUNET.
 - Cuando se realiza la prueba y se compara con la marcara original se observa una discrepancia. para ello, se vuelve a entrenar el modelo para obtener mejores, resultados.
-
+Epoch 15: val_loss did not improve from 0.20612
+72/72 [==============================] - 415s 6s/step - loss: 0.1519 - tversky: 0.9185 - val_loss: 0.2186 - val_tversky: 0.8678
 
