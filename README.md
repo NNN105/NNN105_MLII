@@ -83,4 +83,7 @@ Mejorar la velocidad y la precisión de la detección y localización de tumores
 Epoch 35: val_loss did not improve from 0.24719
 72/72 [==============================] - 401s 6s/step - loss: 0.2076 - tversky: 0.8764 - val_loss: 0.2551 - val_tversky: 0.8371
 
+#### Se evalua el rendimiento del modelo RESUNET.
+- Cuando se realiza la prueba y se compara con la marcara original se observa una discrepancia. para ello, se vuelve a entrenar el modelo para obtener mejores, resultados.
+
 
